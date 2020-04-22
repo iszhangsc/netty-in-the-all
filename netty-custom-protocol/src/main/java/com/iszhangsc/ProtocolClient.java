@@ -1,0 +1,67 @@
+package com.iszhangsc;
+
+import com.iszhangsc.handler.ClientHandler;
+import com.iszhangsc.protocol.SmartCarDecoder;
+import com.iszhangsc.protocol.SmartCarEncoder;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+
+/**
+ * <p>
+ *
+ * </p>
+ *
+ * @author zhangshichang
+ * @date 2020/4/3 下午5:02
+ */
+public class ProtocolClient {
+
+
+    private void connect(int port, String host) throws InterruptedException {
+        // 配置客户端NIO线程组
+        EventLoopGroup group = new NioEventLoopGroup();
+        try {
+            // 客户端辅助启动类 对客户端配置
+            Bootstrap b = new Bootstrap();
+            b.group(group)
+                    .channel(NioSocketChannel.class)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .handler(new MyChannelHandler());
+            // 异步链接服务器 同步等待链接成功
+            ChannelFuture f = b.connect(host, port).sync();
+
+            // 等待链接关闭
+            f.channel().closeFuture().sync();
+
+        } finally {
+            group.shutdownGracefully();
+            System.out.println("客户端优雅的释放了线程资源...");
+        }
+    }
+
+    /**
+     * 网络事件处理器
+     */
+    private static class MyChannelHandler extends ChannelInitializer<SocketChannel> {
+        @Override
+        protected void initChannel(SocketChannel ch) throws Exception {
+            // 添加自定义协议的编解码工具
+            ch.pipeline().addLast(new SmartCarEncoder());
+            ch.pipeline().addLast(new SmartCarDecoder());
+            // 处理网络IO
+            ch.pipeline().addLast(new ClientHandler());
+        }
+
+    }
+
+
+    public static void main(String[] args) throws InterruptedException {
+        new ProtocolClient().connect(9999, "127.0.0.1");
+    }
+}
