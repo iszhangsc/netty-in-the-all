@@ -1,10 +1,13 @@
 package io.netty.example.study.common.order;
 
+import com.google.common.util.concurrent.Uninterruptibles;
 import io.netty.example.study.common.BaseOperation;
 import io.netty.example.study.common.OperationResult;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -30,7 +33,7 @@ public class OrderOperation extends BaseOperation {
     @Override
     public OperationResult execute() {
         log.info("order's executing startup with orderResult:{}, {}", getDish(), getTableId());
-        // 这里可以执行业务逻辑
+        Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
         log.info("order's executing complete");
         return new OrderOperationResult(getTableId(), getDish(), true);
     }

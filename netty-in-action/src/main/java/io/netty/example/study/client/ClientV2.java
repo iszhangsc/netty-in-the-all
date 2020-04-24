@@ -64,9 +64,10 @@ public class ClientV2 {
         OperationResultFuture operationResultFuture = new OperationResultFuture();
         requestPendingCenter.add(streamId, operationResultFuture);
 
-        for (int i = 0; i < 20000; i++) {
+        for (int i = 0; i < 20; i++) {
             channelFuture.channel().writeAndFlush(requestMessage);
         }
+
 
         OperationResult result = operationResultFuture.get();
         System.out.println(result);
