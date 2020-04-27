@@ -1,5 +1,8 @@
 package io.chat.agreement.codec;
 
+import io.chat.agreement.protocol.Command;
+import io.chat.agreement.protocol.Packet;
+import io.chat.agreement.util.SerializationUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -37,6 +40,8 @@ public class ObjDecoder extends ByteToMessageDecoder {
         // 指令占了一位，移除掉
         byte[] data = new byte[dataLength - 1];
         in.readBytes(data);
+        // 反序列化
+        list.add(SerializationUtils.deserialize(data, Packet.getClass(command)));
     }
 
 }

@@ -2,6 +2,9 @@ package io.chat.agreement.protocol.login;
 
 import io.chat.agreement.protocol.Command;
 import io.chat.agreement.protocol.Packet;
+import io.chat.agreement.protocol.login.dto.ChatTalkDto;
+import io.chat.agreement.protocol.login.dto.GroupsDto;
+import io.chat.agreement.protocol.login.dto.UserFriendDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,9 +31,13 @@ public class LoginResponse extends Packet {
     private String userId;
     private String userHead;
     private String userNickName;
-    private List<Object> chatTalkList = new ArrayList<>();
-    private List<Object> groupList = new ArrayList<>();
-    private List<Object> userFriendList = new ArrayList<>();
+    private List<ChatTalkDto> chatTalkList = new ArrayList<>();
+    private List<GroupsDto> groupList = new ArrayList<>();
+    private List<UserFriendDto> userFriendList = new ArrayList<>();
+
+    public LoginResponse(boolean success) {
+        this.success = success;
+    }
 
     @Override
     public Byte getCommand() {
